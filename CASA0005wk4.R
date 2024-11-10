@@ -14,9 +14,18 @@ GII$ISO2C <- countrycode(
   custom_match = NULL,
   origin_regex = NULL
 )
-world <- st_read("world_countries.geojson")
+world <- st_read("world_countries.geojson") %>% st_transform(., 27700)
 GII_shape <- merge(GII, world, by.x = "ISO2C", by.y = "ISO")
 GII_shape$difference = GII_shape$X2019_index - GII_shape$X2010_index
 names(GII_shape)
 GII_shape <- select(GII_shape, "ISO2C", "country", "X2010_index", 'X2019_index', 'geometry', 'difference')
-st_write(GII_shape, "GII.shp")
+st_write(GII_shape, "GII.shp", append = FALSE)
+GII_shape
+
+library(sf)
+library(terra)
+library(dplyr)
+library(spData)
+library(spDataLarge)
+install.packages("tmap", repos = c("https://r-tmap.r-universe.dev",
+                                   "https://cloud.r-project.org"))
